@@ -278,7 +278,7 @@ public class Roots extends Application {
                 Connection conn;
                 try {
                     conn = getmysqlconnection();
-                    insertData(conn,facname,date,knum,fnum,sum,"counter 9*9","","");
+                    insertData(conn,facname,date,knum,fnum,sum,"","","");
                     JOptionPane.showMessageDialog(null, "تمت الاضافة");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "حدث خطأ ");
