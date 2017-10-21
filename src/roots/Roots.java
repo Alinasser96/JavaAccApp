@@ -3,6 +3,7 @@ package Roots;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -53,6 +54,8 @@ public class Roots extends Application {
         Button btn4 = new Button();
         Button btn5 = new Button();
         Button btn6 = new Button();
+        
+        
         RadioButton rb1 = new RadioButton("عميل");
         rb1.setToggleGroup(group);
         rb1.setSelected(true);
@@ -94,6 +97,7 @@ public class Roots extends Application {
                    
                      
                      
+        
                      
         
         
@@ -260,8 +264,10 @@ public class Roots extends Application {
 
                      JButton btnAdd = new JButton("إضافة عنصر");
                      JButton btnAddsql = new JButton("إضافة الفاتورة");
+                     JButton btnPrint = new JButton("'طباعة الفاتورة");
                      btnAdd.setBounds(150, 220, 100, 25);
                      btnAddsql.setBounds(630, 220, 100, 25);
+                     btnPrint.setBounds(630, 250, 100, 25);
                      JScrollPane pane = new JScrollPane(table);
                      pane.setBounds(0, 0, 880, 200);
         
@@ -278,6 +284,7 @@ public class Roots extends Application {
                      frame.add(fnumf);
                      frame.add(btnAddsql);
                      frame.add(btnAdd);
+                     frame.add(btnPrint);
                      Object[] row = new Object[4];
                    
                      
@@ -331,6 +338,25 @@ public class Roots extends Application {
                 
                 
                
+                
+            }
+        });
+        btnPrint.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e ) {
+                try {
+                    Boolean complete = table.print();
+                    if (complete){
+                     JOptionPane.showMessageDialog(null, "تمت الطباعة");
+                    }
+                    else{
+                     JOptionPane.showMessageDialog(null,"جاري الطبع");
+                    }
+                } catch (PrinterException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
                 
             }
         });
