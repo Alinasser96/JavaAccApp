@@ -4,12 +4,17 @@ package Roots;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +41,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -44,6 +55,8 @@ import javax.swing.table.DefaultTableModel;
 public class Roots extends Application {
     double sum=0;
     double total=0;
+    Connection conn2;
+    
     
     @Override
     public void start(Stage primaryStage) {
@@ -54,6 +67,9 @@ public class Roots extends Application {
         Button btn4 = new Button();
         Button btn5 = new Button();
         Button btn6 = new Button();
+        
+        ArrayList<String> bda3aarr=new ArrayList<String>();
+        bda3aarr.add("aly");
         
         
         RadioButton rb1 = new RadioButton("عميل");
@@ -74,6 +90,7 @@ public class Roots extends Application {
         rb3.setUserData("fnum");
         rb3.setUserData("prie");
         
+        
     
         TextField namef = new TextField();
         TextField names = new TextField();
@@ -82,10 +99,10 @@ public class Roots extends Application {
         TextField noo3f = new TextField();
         
         
-        Label namel = new Label("اسم العميل ");
+        Label namel = new Label("الاسم ");
         Label namels = new Label("بحث عن ");
-        Label phonel = new Label("هاتف");
-        Label emaill = new Label("ايميل");
+        Label phonel = new Label("السعر");
+        Label emaill = new Label("الكود");
         Label hsap = new Label("إجمالي");
         Label datel = new Label("تاريخ الفاتورة");
         Label knuml = new Label("دفتر رقم");
@@ -98,8 +115,14 @@ public class Roots extends Application {
                      
                      
         
-                     
-        
+       try {
+    FileOutputStream fos = new FileOutputStream("bda3a");
+    ObjectOutputStream oos = new ObjectOutputStream(fos);
+    oos.writeObject(bda3aarr);
+    oos.close();
+} catch(Exception e) {
+    e.printStackTrace();
+}  
         
         
        
@@ -140,20 +163,94 @@ public class Roots extends Application {
             @Override
             public void handle(ActionEvent event) {
                 total=0;
-                 Connection conn = null;
-                 Statement st = null;
-                 ResultSet rs = null;
-                 String s ; 
+                
                  String keyword="" ;
                  String name= names.getText();
                             if(rb1.isSelected()){
                    keyword= "client";
+                    try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    conn2 =DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //String r="C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report1.jrxml";
+                    JasperDesign jd = JRXmlLoader.load("C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report2.jrxml");
+                    String sql = "SELECT\n" +
+"     data.`date` AS data_date,\n" +
+"     data.`fnum` AS data_fnum,\n" +
+"     data.`price` AS data_price\n" +
+"FROM\n" +
+"     `data` data WHERE data.`"+keyword+"` LIKE '"+name+"'";
+                    JRDesignQuery newquery = new JRDesignQuery();
+                    newquery.setText(sql);
+                    jd.setQuery(newquery);
+                    HashMap param = new HashMap();
+                    param.put("name",name);
+                    JasperReport jr=JasperCompileManager.compileReport(jd);
+                    JasperPrint jp= JasperFillManager.fillReport(jr,param,conn2);
+                    JasperViewer.viewReport(jp,false);
+                } catch (JRException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } 
                    }
                    if(rb2.isSelected()){
                    keyword= "date";
+                    try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    conn2 =DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //String r="C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report1.jrxml";
+                    JasperDesign jd = JRXmlLoader.load("C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report1.jrxml");
+                    String sql = "SELECT\n" +
+"     data.`client` AS data_client,\n" +
+"     data.`price` AS data_price,\n" +
+"     data.`date` AS data_date\n" +
+"FROM\n" +
+"     `data` data WHERE data.`"+keyword+"` LIKE '"+name+"'";
+                    JRDesignQuery newquery = new JRDesignQuery();
+                    newquery.setText(sql);
+                    jd.setQuery(newquery);
+                    JasperReport jr=JasperCompileManager.compileReport(jd);
+                    JasperPrint jp= JasperFillManager.fillReport(jr,null,conn2);
+                    JasperViewer.viewReport(jp,false);
+                } catch (JRException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } 
                    }
                    if(rb3.isSelected()){
                    keyword= "fnum";
+                    try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    conn2 =DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //String r="C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report1.jrxml";
+                    JasperDesign jd = JRXmlLoader.load("C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report1.jrxml");
+                    String sql = "SELECT\n" +
+"     data.`client` AS data_client,\n" +
+"     data.`price` AS data_price,\n" +
+"     data.`date` AS data_date\n" +
+"FROM\n" +
+"     `data` data WHERE data.`"+keyword+"` LIKE '"+name+"'";
+                    JRDesignQuery newquery = new JRDesignQuery();
+                    newquery.setText(sql);
+                    jd.setQuery(newquery);
+                    JasperReport jr=JasperCompileManager.compileReport(jd);
+                    JasperPrint jp= JasperFillManager.fillReport(jr,null,conn2);
+                    JasperViewer.viewReport(jp,false);
+                } catch (JRException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } 
                    }
                    if(rb4.isSelected()){
                    noo3f.setVisible(true);
@@ -161,68 +258,16 @@ public class Roots extends Application {
                    else{
                    noo3f.setVisible(false);
                    }
-                 try {
-                     conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc","root","");
-                     st=conn.createStatement();
-                     s="select * from data WHERE "+keyword+" LIKE '%"+name+"%'";
-                     rs = st.executeQuery(s);
-                     ResultSetMetaData rsmt = rs.getMetaData();
-                     int c = rsmt.getColumnCount();
-                     Vector coulmn = new Vector(c);
-                     
-                     for (int i =1 ; i<=c ;i++){
-                     coulmn.add(rsmt.getColumnName(i));
-                     
-                     }
-                     Vector row = new Vector();
-                     Vector data = new Vector();
-                     
-                     
-                     while(rs.next()){
-                     row = new Vector(c);
-                     for (int i =1 ; i<=c ;i++){
-                     row.add(rs.getString(i));
-                     if(i==6){
-                     total+=Double.parseDouble(rs.getString(i));
-                     }
-                     
-                     }
-                     data.add(row);
-                     
-                     
-                     }
-                     noo3f.setText(""+total+"");
-                     
-                     
-                     
-                     
-                     JFrame frame = new JFrame();
-                     frame.setSize(500,120);
-                     frame.setLocationRelativeTo(null);
-                     
-                     JPanel panel = new JPanel();
-                     JTable table = new JTable(data,coulmn);
-                     
-                     
-                    
-                     JScrollPane jsp = new JScrollPane(table);
-                     panel.setLayout(new BorderLayout());
-                     panel.add(jsp,BorderLayout.CENTER);
-                     frame.setContentPane(panel);
-                     frame.setVisible(true);
-                } catch (Exception e) {
-                     JOptionPane.showMessageDialog(null, "error");
-                }finally{
-                     
-                     try {
-                         conn.close();
-                         rs.close();
-                         st.close();
-                     } catch (Exception e) {
-                          JOptionPane.showMessageDialog(null, "error close");
-                     }
+                
+                   
+               
+                  
+              
+                
+                
             
-            }
+        
+              
             }
         });
         
@@ -294,11 +339,12 @@ public class Roots extends Application {
             
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e ) {
-                double price =Double.parseDouble(textFname.getText())*Double.parseDouble(textLname.getText());
+                Vector row2 = getrow(textId);
+                double price =Double.parseDouble(textFname.getText())*Double.parseDouble(row2.get(2).toString());
                 row[0] = price;
-                 row[1] = textLname.getText();
-                 row[2] = textFname.getText();
-                row[3] = textId.getText();
+                 row[1] = row2.get(2);
+                 row[2] = row2.get(1);
+                row[3] = row2.get(3);
                 
                 sum=sum+price;
                 
@@ -326,7 +372,7 @@ public class Roots extends Application {
                 Connection conn;
                 try {
                     conn = getmysqlconnection();
-                    insertData(conn,facname,date,knum,fnum,sum,"","","");
+                    insertData(conn,facname,date,knum,fnum,sum);
                     JOptionPane.showMessageDialog(null, "تمت الاضافة");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "حدث خطأ ");
@@ -345,17 +391,35 @@ public class Roots extends Application {
             
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e ) {
+                
+                   String facname= facnamef.getText();
                 try {
-                    Boolean complete = table.print();
-                    if (complete){
-                     JOptionPane.showMessageDialog(null, "تمت الطباعة");
-                    }
-                    else{
-                     JOptionPane.showMessageDialog(null,"جاري الطبع");
-                    }
-                } catch (PrinterException ex) {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    conn2 =DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                    //String r="C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report1.jrxml";
+                    JasperDesign jd = JRXmlLoader.load("C:\\Users\\aly hamalawey\\Documents\\NetBeansProjects\\Roots\\src\\roots\\report1.jrxml");
+                    String sql = "SELECT\n" +
+"     data.`client` AS data_client,\n" +
+"     data.`price` AS data_price,\n" +
+"     data.`date` AS data_date\n" +
+"FROM\n" +
+"     `data` data WHERE data.`client` LIKE '"+facname+"'";
+                    JRDesignQuery newquery = new JRDesignQuery();
+                    newquery.setText(sql);
+                    jd.setQuery(newquery);
+                    JasperReport jr=JasperCompileManager.compileReport(jd);
+                    JasperPrint jp= JasperFillManager.fillReport(jr,null,conn2);
+                    JasperViewer.viewReport(jp);
+                } catch (JRException ex) {
                     Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Roots.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+                  
+              
                 
                 
             }
@@ -431,7 +495,7 @@ public class Roots extends Application {
                 Connection conn;
                 try {
                     conn = getmysqlconnection();
-                    insertData(conn,facname,date,knum,"",-1*xxx,"","","");
+                    insertData(conn,facname,date,knum,"",-1*xxx);
                     JOptionPane.showMessageDialog(null, "تمت الاضافة");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "حدث خطأ ");
@@ -522,27 +586,79 @@ public class Roots extends Application {
 
 
     }
-    public static void insertData(Connection conn ,String facname,String date,String knum , String fnum,double price,String things,String ta,String tb) throws Exception{
+    public static void insertData(Connection conn ,String facname,String date,String knum , String fnum,double price) throws Exception{
 
 
-      PreparedStatement pst = conn.prepareStatement("insert into data (client,date,knum,fnum,price,things,typea,typeb) values (?,?,?,?,?,?,?,?)");
+      PreparedStatement pst = conn.prepareStatement("insert into data (client,date,knum,fnum,price) values (?,?,?,?,?)");
       pst.setString(1, facname);
       pst.setString(2,date);
       pst.setString(3,knum);
       pst.setString(4,fnum);
       pst.setDouble(5,price);
-      pst.setString(6,things);
-      pst.setString(7,ta);
-      pst.setString(8,tb);
+     
+      
       pst.execute();
       pst.close();
 
 
     }
     public static Connection getmysqlconnection() throws Exception{
+    
     Class.forName("com.mysql.jdbc.Driver");
-    return DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc","root","");
+    return DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
     }
+    
+    public static Vector getrow(JTextField names){
+    
+                
+                 Connection conn = null;
+                 Statement st = null;
+                 ResultSet rs = null;
+                 String s ; 
+                 
+                 String name= names.getText();
+                 Vector row = new Vector();
+                            
+                 try {
+                     conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1/rootsAcc?useUnicode=yes&characterEncoding=UTF-8","root","");
+                     st=conn.createStatement();
+                     s="select * from client WHERE email LIKE '%"+name+"%'";
+                     rs = st.executeQuery(s);
+                     ResultSetMetaData rsmt = rs.getMetaData();
+                     int c = rsmt.getColumnCount();
+                     
+                     
+                     
+                     
+                     
+                     while(rs.next()){
+                     row = new Vector(c);
+                     for (int i =1 ; i<=c ;i++){
+                     row.add(rs.getString(i));
+                    
+                     
+                     }
+                     
+                     
+                     
+                     }   
+                } catch (Exception e) {
+                     JOptionPane.showMessageDialog(null, "error");
+                }finally{
+                     
+                     try {
+                         conn.close();
+                         rs.close();
+                         st.close();
+                     } catch (Exception e) {
+                          JOptionPane.showMessageDialog(null, "error close");
+                     }
+            
+            }
+                 return row;
+    }
+   
+   
     
     
 }

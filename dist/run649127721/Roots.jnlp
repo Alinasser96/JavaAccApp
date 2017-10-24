@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Roots.jnlp">
+  <information>
+    <title>Roots</title>
+    <vendor>aly hamalawey</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Roots.jar" size="599268" download="eager" />
+    <jar href="lib\antlrall-2.7.6.jar" size="450792" download="eager" />
+    <jar href="lib\asm-3.1.jar" size="43035" download="eager" />
+    <jar href="lib\cglib-nodep-2.1.3.jar" size="324238" download="eager" />
+    <jar href="lib\com.springsource.org.objectweb.asm-sources-2.2.3.jar" size="266812" download="eager" />
+    <jar href="lib\commons-beanutils-core-1.8.0.jar" size="206035" download="eager" />
+    <jar href="lib\commons-digester-2.1.jar" size="196768" download="eager" />
+    <jar href="lib\commons-logging-1.2-javadoc.jar" size="158448" download="eager" />
+    <jar href="lib\commons-logging-1.2.jar" size="61829" download="eager" />
+    <jar href="lib\commons-logging-api-1.1.1.jar" size="52313" download="eager" />
+    <jar href="lib\commons.collections-3.2.1.jar" size="582765" download="eager" />
+    <jar href="lib\groovy-all-2.1.3.jar" size="6348194" download="eager" />
+    <jar href="lib\jasperreports-6.4.3.jar" size="5487044" download="eager" />
+    <jar href="lib\jdt-compiler-3.1.1.jar" size="1212369" download="eager" />
+    <jar href="lib\jfreechart.jar" size="1044877" download="eager" />
+    <jar href="lib\mysql-connector-java-5.1.44-bin.jar" size="999635" download="eager" />
+    <jar href="lib\org.objectweb.asm-3.2.0.jar" size="99361" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Roots" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="Roots.Roots"  name="Roots" />
+  <update check="always"/>
+</jnlp>
